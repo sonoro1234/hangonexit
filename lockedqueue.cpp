@@ -5,7 +5,29 @@
 
 typedef void (*fun)(int);
 typedef void (*funload)(fun*);
+typedef void (*fununload)();
 
+bool PlugIn_UnLoad(HINSTANCE pinst)
+{
+	void *ptr = (void *)GetProcAddress( pinst, "unload" );
+	if (!ptr) {
+		char *s;
+		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                       NULL, GetLastError() , MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&s, 0, NULL );
+		printf("*** ERROR: GetProcAddress err '%s'\n", s);
+		LocalFree( s );
+
+		//FreeLibrary(hinstance);
+		return false;
+	}
+
+	fununload loadFunc = (fununload)ptr;
+	(*loadFunc)();
+
+	// FIXME: at the moment we never call FreeLibrary() on a loaded plugin
+
+	return true;
+}
 bool PlugIn_Load(const char *filename,fun *funct,HINSTANCE *pinst)
 {
 
@@ -53,8 +75,9 @@ int main(){
 	for(int i=1;i<30;i++)
 		(*fu)(i);
 	std::this_thread::sleep_for(std::chrono::seconds(2));
-	if(!FreeLibrary(hinstance))
-        std::cout << "FreeLibrary failed" << std::endl;
+	PlugIn_UnLoad(hinstance);
+	//if(!FreeLibrary(hinstance))
+    //    std::cout << "FreeLibrary failed" << std::endl;
 
     std::cout << "End main" << std::endl;
 	return 0 ;

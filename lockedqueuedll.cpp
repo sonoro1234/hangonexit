@@ -41,17 +41,21 @@ struct DiskIOThread
 
 DiskIOThread gDiskI;
 void Write(int data){
-	gDiskI.Write(data);
+	(gDiskI).Write(data);
 }
 
 typedef void (*fun)(int);
 extern "C" __declspec(dllexport) void load(fun *function){
-	new(&gDiskI) DiskIOThread();
-	gDiskI.launchThread();
+	//new(&gDiskI) DiskIOThread();
+	//gDiskI = new DiskIOThread();
+	(gDiskI).launchThread();
 	(*function) = &Write;
 }
+extern "C" __declspec(dllexport) void unload(){
+	(gDiskI).~DiskIOThread();
+}
 
-/*
+
 BOOL WINAPI DllMain(
     HINSTANCE hinstDLL,  // handle to DLL module
     DWORD fdwReason,     // reason for calling function
@@ -64,28 +68,28 @@ BOOL WINAPI DllMain(
         case DLL_PROCESS_ATTACH:
          // Initialize once for each new process.
          // Return FALSE to fail DLL load.
-         //std::cout << "DLL_PROCESS_ATTACH" << std::endl;
+         std::cout << "DLL_PROCESS_ATTACH" << std::endl;
          a = 1;
             break;
 
         case DLL_THREAD_ATTACH:
          // Do thread-specific initialization.
-        // std::cout << "DLL_THREAD_ATTACH" << std::endl;
+         std::cout << "DLL_THREAD_ATTACH" << std::endl;
          a = 1;
             break;
 
         case DLL_THREAD_DETACH:
          // Do thread-specific cleanup.
-        // std::cout << "DLL_THREAD_DETACH" << std::endl;
+         std::cout << "DLL_THREAD_DETACH" << std::endl;
          a = 1;
             break;
 
         case DLL_PROCESS_DETACH:
          // Perform any necessary cleanup.
-        // std::cout << "DLL_PROCESS_DETACH" << std::endl;
+         std::cout << "DLL_PROCESS_DETACH" << std::endl;
          a = 1;
             break;
     }
     return TRUE;  // Successful DLL_PROCESS_ATTACH.
 }
-*/
+
