@@ -46,7 +46,7 @@ void Write(int data){
 
 typedef void (*fun)(int);
 extern "C" __declspec(dllexport) void load(fun *function){
-	//new(&gDiskI) DiskIOThread();
+	new(&gDiskI) DiskIOThread();
 	//gDiskI = new DiskIOThread();
 	(gDiskI).launchThread();
 	(*function) = &Write;
@@ -56,7 +56,7 @@ extern "C" __declspec(dllexport) void unload(){
 }
 
 
-BOOL WINAPI DllMain(
+extern "C" __declspec(dllexport) BOOL APIENTRY DllMain(
     HINSTANCE hinstDLL,  // handle to DLL module
     DWORD fdwReason,     // reason for calling function
     LPVOID lpReserved )  // reserved
