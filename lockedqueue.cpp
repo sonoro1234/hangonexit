@@ -75,7 +75,7 @@ int main(){
 	for(int i=1;i<30;i++)
 		(*fu)(i);
 	std::this_thread::sleep_for(std::chrono::seconds(2));
-	PlugIn_UnLoad(hinstance);
+	//PlugIn_UnLoad(hinstance);
 	//if(!FreeLibrary(hinstance))
     //    std::cout << "FreeLibrary failed" << std::endl;
 

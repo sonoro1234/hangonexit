@@ -46,13 +46,14 @@ void Write(int data){
 
 typedef void (*fun)(int);
 extern "C" __declspec(dllexport) void load(fun *function){
-	new(&gDiskI) DiskIOThread();
+	//new(&gDiskI) DiskIOThread();
 	//gDiskI = new DiskIOThread();
 	(gDiskI).launchThread();
 	(*function) = &Write;
 }
 extern "C" __declspec(dllexport) void unload(){
-	(gDiskI).~DiskIOThread();
+	/*(*gDiskI).~DiskIOThread();*/
+
 }
 
 
@@ -69,6 +70,7 @@ extern "C" __declspec(dllexport) BOOL APIENTRY DllMain(
          // Initialize once for each new process.
          // Return FALSE to fail DLL load.
          std::cout << "DLL_PROCESS_ATTACH" << std::endl;
+        // (gDiskI).launchThread();
          a = 1;
             break;
 
